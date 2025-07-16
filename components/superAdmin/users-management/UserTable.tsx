@@ -101,12 +101,18 @@ const UserTableRow = ({
       </TableCell>
       <TableCell className="px-4 py-3">
         <div className="flex items-center justify-center gap-2">
-          <UserActions
+          {/* <UserActions
             user={user}
             onEdit={onEdit}
             onToggleStatus={onToggleStatus}
             onSuccess={() => {}}
-          />
+          /> */}
+          <UserActions
+  user={user}
+  // onEdit={onEdit}
+  // onToggleStatus={onToggleStatus}
+  onSuccess={() => {}}
+/>
         </div>
       </TableCell>
     </TableRow>

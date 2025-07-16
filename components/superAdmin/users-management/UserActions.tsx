@@ -2,37 +2,31 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { PencilLine, Users } from "lucide-react";
+import { Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { User } from "@/types/user";
 import EditUserDialog from "@/components/superAdmin/users-management/EditUserDialog";
 import ResetPasswordDialog from "@/components/superAdmin/users-management/ResetPasswordDialog";
 
-export const UserActions = ({
-  user,
-  onSuccess,
-}: {
+interface UserActionsProps {
   user: User;
-  onSuccess: () => void;
-}) => {
+  onSuccess: () => void; // callback when user data changes (edit, toggle, reset)
+}
+
+export const UserActions = ({ user, onSuccess }: UserActionsProps) => {
   const [editOpen, setEditOpen] = useState(false);
   const [resetOpen, setResetOpen] = useState(false);
-  const [currentUser, setCurrentUser] = useState<User | null>(user ?? null);
+  const [currentUser, setCurrentUser] = useState<User>(user);
 
   const handleToggleStatus = async () => {
-    if (!currentUser) return;
-
     const newStatus = !currentUser.is_active;
 
     try {
       const res = await fetch(
-        // `http://localhost:5000/api/v1/auth/toggle-status/${currentUser.id}`,
-         `https://edu-track-4h4z.onrender.com/api/v1/auth/toggle-status/${currentUser.id}`,
+        `https://edu-track-4h4z.onrender.com/api/v1/auth/toggle-status/${currentUser.id}`,
         {
           method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ is_active: newStatus }),
         }
       );
@@ -57,7 +51,7 @@ export const UserActions = ({
   return (
     <>
       <div className="flex space-x-2">
-        {/* ✅ Reset Password with Image */}
+        {/* Reset Password Button */}
         <Button
           variant="ghost"
           size="sm"
@@ -81,9 +75,9 @@ export const UserActions = ({
           className="flex flex-col items-center justify-center w-[120px] h-14 text-[10px] text-yellow-500 bg-yellow-50 hover:text-yellow-800 hover:bg-yellow-100"
           onClick={() => setEditOpen(true)}
         >
-     <Image
+          <Image
             src="/images/icon/Edit.png"
-            alt="Reset Password Icon"
+            alt="Edit Icon"
             width={12}
             height={12}
             className="mb-1"
@@ -107,7 +101,7 @@ export const UserActions = ({
         </Button>
       </div>
 
-      {/* Edit Dialog */}
+      {/* Edit User Dialog */}
       <EditUserDialog
         user={currentUser}
         open={editOpen}

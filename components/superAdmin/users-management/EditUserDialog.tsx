@@ -22,6 +22,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { User } from "@/types/user";
 import { editUserSchema, EditUserFormData } from "./validation";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export default function EditUserDialog({
   user,
@@ -40,7 +41,7 @@ export default function EditUserDialog({
       firstName: "",
       lastName: "",
       email: "",
-  role: "Admin", // or set to undefined
+      role: "Admin",
     },
   });
 
@@ -61,8 +62,7 @@ export default function EditUserDialog({
   const onSubmit = async (data: EditUserFormData) => {
     setIsSubmitting(true);
     try {
-      // const res = await fetch(`http://localhost:5000/api/v1/users/${user?.id}`, {
-             const res = await fetch(`https://edu-track-4h4z.onrender.com/api/v1/users/${user?.id}`, {
+      const res = await fetch(`https://edu-track-4h4z.onrender.com/api/v1/users/${user?.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -137,14 +137,27 @@ export default function EditUserDialog({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Role</FormLabel>
-                  <FormControl><Input {...field} /></FormControl>
+                  <FormControl>
+                    <Select value={field.value} onValueChange={field.onChange}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select Role" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Super Admin">Super Admin</SelectItem>
+                        <SelectItem value="Admin">Admin</SelectItem>
+                        <SelectItem value="Viewer">Viewer</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
 
-            <div className="flex justify-end gap-2">
-              <Button type="button" variant="outline" onClick={onClose}>Cancel</Button>
+            <div className="flex justify-end gap-2 pt-4">
+              <Button type="button" variant="outline" onClick={onClose}>
+                Cancel
+              </Button>
               <Button type="submit" disabled={isSubmitting}>
                 {isSubmitting ? "Saving..." : "Save"}
               </Button>
