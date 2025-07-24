@@ -16,16 +16,12 @@ export const UserTable = ({
   users,
   loading,
   error,
-  onEdit,
-  onToggleStatus,
-  onResetPassword,
+  onRefresh,
 }: {
   users: User[];
   loading: boolean;
   error: string | null;
-  onEdit: (user: User) => void;
-  onToggleStatus: (user: User) => Promise<User>;
-  onResetPassword: (user: User) => void;
+  onRefresh: () => void; // callback when user data updates
 }) => {
   if (loading) return <p className="p-4 text-center">Loading users...</p>;
   if (error)
@@ -59,7 +55,10 @@ export const UserTable = ({
         <TableBody>
           {users.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={5} className="text-center text-gray-500 py-10">
+              <TableCell
+                colSpan={5}
+                className="text-center text-gray-500 py-10"
+              >
                 No users found
               </TableCell>
             </TableRow>
@@ -69,9 +68,7 @@ export const UserTable = ({
                 key={user.id}
                 user={user}
                 isLast={index === users.length - 1}
-                onEdit={onEdit}
-                onToggleStatus={onToggleStatus}
-                onResetPassword={onResetPassword}
+                onRefresh={onRefresh}
               />
             ))
           )}
@@ -83,46 +80,41 @@ export const UserTable = ({
 
 const UserTableRow = ({
   user,
-  onEdit,
-  onToggleStatus,
-  onResetPassword,
+  onRefresh,
   isLast,
 }: {
   user: User;
-  onEdit: (user: User) => void;
-  onToggleStatus: (user: User) => Promise<User>;
-  onResetPassword: (user: User) => void;
+  onRefresh: () => void;
   isLast?: boolean;
 }) => {
   return (
     <TableRow className="bg-white shadow border border-gray-200 overflow-hidden">
-     <TableCell className={`px-4 py-3 font-semibold text-gray-900 ${isLast ? "rounded-bl-xl" : ""}`}>
-    {user.name}
-  </TableCell>
+      {/* Name */}
+      <TableCell
+        className={`px-4 py-3 font-semibold text-gray-900 ${
+          isLast ? "rounded-bl-xl" : ""
+        }`}
+      >
+        {user.name}
+      </TableCell>
 
-  {/* Email - gray */}
-  <TableCell className="px-4 py-3 text-gray-500">
-    {user.email}
-  </TableCell>
+      {/* Email */}
+      <TableCell className="px-4 py-3 text-gray-500">{user.email}</TableCell>
 
-  {/* Role - bold/capitalized */}
-  <TableCell className="px-4 py-3 capitalize font-medium text-gray-800">
-    {user.role}
-  </TableCell>
+      {/* Role */}
+      <TableCell className="px-4 py-3 capitalize font-medium text-gray-800">
+        {user.role}
+      </TableCell>
 
-  {/* Status - dot badge */}
-  <TableCell className="px-4 py-3">
-    <StatusBadge status={user.is_active} />
-  </TableCell>
+      {/* Status */}
+      <TableCell className="px-4 py-3">
+        <StatusBadge status={user.is_active} />
+      </TableCell>
+
+      {/* Actions */}
       <TableCell className={`px-4 py-3 ${isLast ? "rounded-br-xl" : ""}`}>
         <div className="flex items-center justify-center gap-2">
-          <UserActions
-            user={user}
-            onEdit={onEdit}
-            onToggleStatus={onToggleStatus}
-            onResetPassword={onResetPassword}
-            onSuccess={() => {}}
-          />
+          <UserActions user={user} onSuccess={onRefresh} />
         </div>
       </TableCell>
     </TableRow>

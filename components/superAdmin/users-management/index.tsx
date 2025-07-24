@@ -12,7 +12,9 @@ async function fetchCurrentUser() {
   const userId = localStorage.getItem("userId");
   if (!userId) throw new Error("No user ID found for current user");
 
-  const res = await fetch(`https://edu-track-4h4z.onrender.com/api/v1/auth/me?id=${userId}`);
+  const res = await fetch(
+    `https://edu-track-4h4z.onrender.com/api/v1/auth/me?id=${userId}`
+  );
   if (!res.ok) throw new Error("Failed to fetch current user");
 
   const data = await res.json();
@@ -34,7 +36,9 @@ export default function UserManagement() {
 
   const [searchTerm, setSearchTerm] = useState("");
   const [roleFilter, setRoleFilter] = useState<User["role"] | "all">("all");
-  const [statusFilter, setStatusFilter] = useState<"Active" | "Inactive" | "all">("all");
+  const [statusFilter, setStatusFilter] = useState<
+    "Active" | "Inactive" | "all"
+  >("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
@@ -59,7 +63,7 @@ export default function UserManagement() {
     );
   if (!currentUser) return <p>No current user info found.</p>;
 
-  // ✅ FIXED STATUS FILTER LOGIC
+  // Filtered Users
   const filteredUsers = users.filter((user) => {
     const matchesSearch =
       user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -79,22 +83,6 @@ export default function UserManagement() {
   const startIndex = (currentPage - 1) * rowsPerPage;
   const endIndex = startIndex + rowsPerPage;
   const paginatedUsers = filteredUsers.slice(startIndex, endIndex);
-
-  const handleEditUser = (user: User) => {
-    console.log("Edit user:", user);
-    // TODO: Handle edit logic
-  };
-
-  const handleToggleStatus = async (user: User): Promise<User> => {
-    console.log("Toggle status for user:", user);
-    // TODO: Implement actual toggle logic
-    return Promise.resolve(user);
-  };
-
-  const handleResetPassword = (user: User) => {
-    console.log("Reset password for user:", user);
-    // TODO: Implement reset password logic
-  };
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
@@ -145,9 +133,7 @@ export default function UserManagement() {
           users={paginatedUsers}
           loading={isLoading}
           error={isError ? (error as Error).message : null}
-          onEdit={handleEditUser}
-          onToggleStatus={handleToggleStatus}
-          onResetPassword={handleResetPassword}
+          onRefresh={refetch}
         />
 
         {filteredUsers.length > 0 && (
