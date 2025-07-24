@@ -1,6 +1,6 @@
 "use client";
 
-import { Plus, Download,Search } from "lucide-react";
+import { Plus, Download, Search } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { StudentFilters } from "@/components/students/StudentFilters";
@@ -10,6 +10,7 @@ import { Student, StudentStatus } from "@/types/student";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { fetchStudents } from "@/actions/student";
+import CreateStudentDialog from "@/components/students/CreateStudentDialog";
 
 export default function Students() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -17,11 +18,15 @@ export default function Students() {
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
+  // State to control create student dialog open/close
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+
   // Fetch students with React Query
   const {
     data: students = [],
     isLoading,
     error,
+    refetch,
   } = useQuery<Student[], Error>({
     queryKey: ["students"],
     queryFn: fetchStudents,
@@ -32,7 +37,6 @@ export default function Students() {
   const filteredStudents = students.filter((student) => {
     const lowerSearch = searchTerm.toLowerCase();
 
-    // Check if any of these fields contain the search term
     const matchesSearch =
       student.firstname.toLowerCase().includes(lowerSearch) ||
       student.lastname.toLowerCase().includes(lowerSearch) ||
@@ -51,6 +55,7 @@ export default function Students() {
   const endIndex = startIndex + rowsPerPage;
   const currentStudents = filteredStudents.slice(startIndex, endIndex);
 
+  // Handlers for table actions
   const handleEditStudent = (student: Student) => {
     console.log("Edit student:", student);
     // Implement edit logic
@@ -66,9 +71,20 @@ export default function Students() {
     // Implement view details logic
   };
 
-  const handleAddStudent = () => {
-    console.log("Add new student");
-    // Implement add student logic
+  // Open create student dialog
+  const openCreateDialog = () => {
+    setIsCreateDialogOpen(true);
+  };
+
+  // Close create student dialog
+  const closeCreateDialog = () => {
+    setIsCreateDialogOpen(false);
+  };
+
+  // Handle after student creation - optionally refetch data
+  const handleStudentCreated = () => {
+    closeCreateDialog();
+    refetch();
   };
 
   const handleExport = () => {
@@ -84,48 +100,83 @@ export default function Students() {
             {/* Header */}
             <div className="flex items-center justify-between">
               <div>
-                <h2 style={{ fontFamily: "General Sans, sans-serif",color:'#0D0D0D',fontSize:30,fontWeight:600 }} className="text-2xl font-bold text-gray-900">Student Management</h2>
-                <p style={{ fontFamily: "General Sans, sans-serif",color:'#64626C',fontSize:12,fontWeight:500 }} className="text-gray-600 mt-1">
+                <h2
+                  style={{
+                    fontFamily: "General Sans, sans-serif",
+                    color: "#0D0D0D",
+                    fontSize: 30,
+                    fontWeight: 600,
+                  }}
+                  className="text-2xl font-bold text-gray-900"
+                >
+                  Student Management
+                </h2>
+                <p
+                  style={{
+                    fontFamily: "General Sans, sans-serif",
+                    color: "#64626C",
+                    fontSize: 12,
+                    fontWeight: 500,
+                  }}
+                  className="text-gray-600 mt-1"
+                >
                   Add, Edit, View, and Manage Student Records with Ease
                 </p>
               </div>
-               <div className="flex items-center  mb-6">
-              {/* Search Box */}
-              <div className="relative w-full max-w-md mt-5">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 h-4 w-4" />
-                <input
-                  style={{
-          fontFamily: "'General Sans', sans-serif",
-          fontSize: 15,
-          fontWeight: 300,
-          color: '#000000',
-        }}
-                  type="text"
-                  placeholder="Search by name or level..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 w-full border border-gray-300 rounded-md py-2 focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-transparent"
-                />
-              </div>
+              <div className="flex items-center mb-6">
+                {/* Search Box */}
+                <div className="relative w-full max-w-md mt-5">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 h-4 w-4" />
+                  <input
+                    style={{
+                      fontFamily: "'General Sans', sans-serif",
+                      fontSize: 15,
+                      fontWeight: 300,
+                      color: "#000000",
+                    }}
+                    type="text"
+                    placeholder="Search by name or level..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-10 w-full border border-gray-300 rounded-md py-2 focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-transparent"
+                  />
+                </div>
 
-              {/* Add Button */}
-              <Button
-                style={{
-        fontFamily: "'General Sans', sans-serif",
-        fontSize: 14,
-        fontWeight: 400,
-      }}
-                className="mt-5 ml-4 bg-black text-white hover:bg-gray-800 flex items-center gap-2 whitespace-nowrap"
-                onClick={() => {
-                  console.log("Add Formation clicked");
-                }}
-              >
-                <Plus className="h-4 w-4" />
-                Add New Student
-              </Button>
+                {/* Add Button */}
+                {/* <Button
+                  style={{
+                    fontFamily: "'General Sans', sans-serif",
+                    fontSize: 14,
+                    fontWeight: 400,
+                  }}
+                  className="mt-5 ml-4 bg-black text-white hover:bg-gray-800 flex items-center gap-2 whitespace-nowrap"
+                  onClick={openCreateDialog}
+                >
+                  <Plus className="h-4 w-4" />
+                  Add New Student
+                </Button> */}
+                   {/* Create Student Dialog */}
+            {/* <CreateStudentDialog
+            style={{
+                    fontFamily: "'General Sans', sans-serif",
+                    fontSize: 14,
+                    fontWeight: 400,
+                  }}
+                  className="mt-5 ml-4 bg-black text-white hover:bg-gray-800 flex items-center gap-2 whitespace-nowrap"
+                  // onClick={openCreateDialog}
+              isOpen={isCreateDialogOpen}
+              onClose={closeCreateDialog}
+              onStudentCreated={handleStudentCreated}
+            /> */}
+           <CreateStudentDialog
+  className="mt-5 ml-4 bg-black text-white hover:bg-gray-800 flex items-center gap-2 whitespace-nowrap font-sans text-[14px] font-normal"
+  open={isCreateDialogOpen}
+  onOpenChange={(open) => setIsCreateDialogOpen(open)}
+  onStudentCreated={handleStudentCreated}
+/>
+
+              </div>
             </div>
-            </div>
-           
 
             <StudentTable
               students={currentStudents}
@@ -145,6 +196,8 @@ export default function Students() {
                 onRowsPerPageChange={setRowsPerPage}
               />
             )}
+
+         
           </div>
         </main>
       </div>

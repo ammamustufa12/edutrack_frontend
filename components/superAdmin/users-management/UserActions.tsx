@@ -89,7 +89,7 @@ export const UserActions = ({ user, onSuccess }: UserActionsProps) => {
         <Button
           variant="ghost"
           size="sm"
-          className={`flex flex-col items-center justify-center w-[120px] h-12 text-[10px] ${
+          className={`flex flex-col items-center justify-center  w-[120px] h-14 text-[10px] ${
             currentUser.is_active
               ? "text-red-500 bg-red-50 hover:text-red-800 hover:bg-red-100"
               : "text-green-500 bg-green-50 hover:text-green-800 hover:bg-green-100"

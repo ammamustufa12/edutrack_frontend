@@ -1,4 +1,3 @@
-// components/users/UserPagination.tsx
 "use client";
 import { Button } from "@/components/ui/button";
 import {
@@ -9,21 +8,78 @@ import {
  SelectValue,
 } from "@/components/ui/select";
 
+interface UserPaginationProps {
+ currentPage: number;
+ totalPages: number;
+ rowsPerPage: number;
+ onPageChange: (page: number) => void;
+ onRowsPerPageChange: (rows: number) => void;
+}
+
 export const UserPagination = ({
  currentPage,
  totalPages,
  rowsPerPage,
  onPageChange,
  onRowsPerPageChange,
-}: {
- currentPage: number;
- totalPages: number;
- rowsPerPage: number;
- onPageChange: (page: number) => void;
- onRowsPerPageChange: (rows: number) => void;
-}) => {
+}: UserPaginationProps) => {
+ const renderPageButtons = () => {
+  const pages = [];
+
+  const startPage = Math.max(2, currentPage - 2);
+  const endPage = Math.min(totalPages - 1, currentPage + 2);
+
+  pages.push(
+   <Button
+    key={1}
+    variant={currentPage === 1 ? "default" : "outline"}
+    size="sm"
+    onClick={() => onPageChange(1)}
+   >
+    1
+   </Button>
+  );
+
+  if (startPage > 2) {
+   pages.push(<span key="start-ellipsis" className="text-gray-400 px-1">...</span>);
+  }
+
+  for (let i = startPage; i <= endPage; i++) {
+   pages.push(
+    <Button
+     key={i}
+     variant={currentPage === i ? "default" : "outline"}
+     size="sm"
+     onClick={() => onPageChange(i)}
+    >
+     {i}
+    </Button>
+   );
+  }
+
+  if (endPage < totalPages - 1) {
+   pages.push(<span key="end-ellipsis" className="text-gray-400 px-1">...</span>);
+  }
+
+  if (totalPages > 1) {
+   pages.push(
+    <Button
+     key={totalPages}
+     variant={currentPage === totalPages ? "default" : "outline"}
+     size="sm"
+     onClick={() => onPageChange(totalPages)}
+    >
+     {totalPages}
+    </Button>
+   );
+  }
+
+  return pages;
+ };
+
  return (
-  <div className="flex items-center justify-between mt-4">
+  <div className="relative w-full mt-4 flex items-center">
+   {/* Left: Show Rows */}
    <div className="flex items-center space-x-2 text-sm text-gray-600">
     <span>Show</span>
     <Select
@@ -39,53 +95,29 @@ export const UserPagination = ({
       <SelectItem value="50">50</SelectItem>
      </SelectContent>
     </Select>
-    <span>users per page</span>
+    <span>Rows</span>
    </div>
 
-   <div className="flex items-center space-x-2">
+   {/* Center: Pagination */}
+   <div className="absolute left-1/2 -translate-x-1/2 flex items-center space-x-1">
     <Button
      variant="outline"
      size="sm"
-     onClick={() => onPageChange(Math.max(1, currentPage - 1))}
+     onClick={() => onPageChange(currentPage - 1)}
      disabled={currentPage === 1}
     >
-     Previous
+     ‹
     </Button>
 
-    {[...Array(Math.min(5, totalPages))].map((_, i) => {
-     const pageNum = i + 1;
-     return (
-      <Button
-       key={pageNum}
-       variant={currentPage === pageNum ? "default" : "outline"}
-       size="sm"
-       onClick={() => onPageChange(pageNum)}
-      >
-       {pageNum}
-      </Button>
-     );
-    })}
-
-    {totalPages > 5 && (
-     <>
-      <span className="text-gray-400">...</span>
-      <Button
-       variant="outline"
-       size="sm"
-       onClick={() => onPageChange(totalPages)}
-      >
-       {totalPages}
-      </Button>
-     </>
-    )}
+    {renderPageButtons()}
 
     <Button
      variant="outline"
      size="sm"
-     onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))}
+     onClick={() => onPageChange(currentPage + 1)}
      disabled={currentPage === totalPages}
     >
-     Next
+     ›
     </Button>
    </div>
   </div>

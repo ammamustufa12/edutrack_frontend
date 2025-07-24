@@ -176,7 +176,7 @@ export const LoginForm = ({ onSuccess }: LoginFormProps) => {
                
      style={{ fontFamily: "General Sans, sans-serif", color: "#1A1A1A",fontSize:13 }}
               type="button"
-              onClick={() => router.push("/auth/forgot-password")}
+              onClick={() => router.push("forgot-password")}
               className="text-sm text-green-600 hover:text-green-700 font-medium transition-colors"
               disabled={isLoading}
             >
@@ -196,7 +196,7 @@ export const LoginForm = ({ onSuccess }: LoginFormProps) => {
         </form>
       </Form>
 
-      {/* Signup Link */}
+      {/* Signup Link 
       <div 
      style={{ fontFamily: "General Sans, sans-serif", color: "#1A1A1A",fontSize:15 }} className="text-center text-sm text-gray-600">
         Do not have an account?{" "}
@@ -210,7 +210,7 @@ export const LoginForm = ({ onSuccess }: LoginFormProps) => {
         >
           Create a Company Account
         </button>
-      </div>
+      </div> */}
     </div>
   );
 };

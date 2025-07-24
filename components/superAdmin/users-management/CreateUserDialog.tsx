@@ -190,14 +190,14 @@ export default function CreateUserDialog({
                         defaultValue={field.value}
                       >
                         <FormControl>
-                          <SelectTrigger>{field.value}</SelectTrigger>
+                          <SelectTrigger>SELECT ROLE</SelectTrigger>
                         </FormControl>
                         <SelectContent>
                           <RadioGroup
                             value={field.value}
                             onValueChange={field.onChange}
                           >
-                            {["Super Admin", "Admin", "Viewer"].map((role) => (
+                            {["Admin", "Viewer"].map((role) => (
                               <div
                                 className="flex items-center space-x-3"
                                 key={role}

@@ -35,7 +35,7 @@ export const StudentTable = ({
        <Table className="min-w-full border-separate border-spacing-y-4">
          <TableHeader>
            <TableRow className="bg-gray-50">
-             {["ID", "FirstName", "LastNja", "End Date", "Level", "Actions"].map(
+             {[ "FirstName", "LastName", "Birthdate", "Level","Parent 1", "Parent 2", "Actions"].map(
                (title, i) => (
                  <TableHead
                    key={i}
@@ -93,12 +93,13 @@ const StudentTableRow = ({
 }) => {
   return (
   <TableRow className="bg-white rounded-xl shadow border border-gray-200 px-4 py-5 ">
+    
       <TableCell className="px-6 py-6 font-medium">{student.firstname}</TableCell>
       <TableCell className="px-6 py-6 font-medium">{student.lastname}</TableCell>
       <TableCell className="px-6 py-6 text-gray-600">{student.birthdate}</TableCell>
       <TableCell className="px-6 py-6 text-gray-600">{student.level}</TableCell>
       <TableCell className="px-6 py-6 text-gray-600">{student.parent1}</TableCell>
-      <TableCell className="px-6 py-6 text-gray-600">{student.parent2 || "-"}</TableCell>
+      <TableCell className="px-6 py-6 text-gray-600">{student.parent2 }</TableCell>
    
       <TableCell>
         <StudentActions

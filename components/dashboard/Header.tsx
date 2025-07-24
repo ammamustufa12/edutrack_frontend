@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Search, Bell, Settings, Mail, MessageSquare } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import Image from "next/image";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -65,7 +66,7 @@ export const Header = () => {
     fontWeight: 600,
   }}
 >
-  {user?.role ? `${capitalizeFirstWord(user.role)} Dashboard` : "Dashboard"}
+   {user?.role ? `Dashboard. ${capitalizeFirstWord(user.role)} Access` : "Dashboard"}
 </h3>
 
 
@@ -119,23 +120,30 @@ export const Header = () => {
           </DropdownMenu>
 
           {/* Messages Dropdown */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="relative outline-none rounded-full bg-gray-50 hover:bg-gray-100"
-              >
-                <Mail className="text-gray-600 h-5 w-5" />
-                <span className="absolute top-0 right-0 w-2.5 h-2.5 bg-blue-500 rounded-full" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-80 !rounded-2xl">
-              <DropdownMenuLabel>Messages</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>New message from John</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+       <DropdownMenu>
+  <DropdownMenuTrigger asChild>
+    <Button
+      variant="ghost"
+      size="icon"
+      className="relative outline-none rounded-full bg-gray-50 hover:bg-gray-100"
+    >
+      <Image
+        src="/images/icon/messages-2.png"
+        alt="Messages"
+        width={22} // smaller size
+        height={22}
+        className="object-contain"
+      />
+      <span className="absolute top-0 right-0 w-2.5 h-2.5 bg-blue-500 rounded-full" />
+    </Button>
+  </DropdownMenuTrigger>
+  <DropdownMenuContent align="end" className="w-80 !rounded-2xl">
+    <DropdownMenuLabel>Messages</DropdownMenuLabel>
+    <DropdownMenuSeparator />
+    <DropdownMenuItem>New message from John</DropdownMenuItem>
+  </DropdownMenuContent>
+</DropdownMenu>
+
 
           {/* Settings Dropdown */}
           <DropdownMenu>
@@ -159,7 +167,7 @@ export const Header = () => {
           {/* User Avatar Dropdown */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Avatar className="h-10 w-10 ring-2 ring-gray-200 cursor-pointer hover:ring-blue-300 transition-all">
+              <Avatar className="h-10 w-10 ring-2 ring-green-500 cursor-pointer hover:ring-blue-300 transition-all">
                 <AvatarImage src="https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg" />
                 <AvatarFallback className="bg-orange-500 text-white font-medium">
                   {user?.name?.slice(0, 2).toUpperCase() ?? "SA"}

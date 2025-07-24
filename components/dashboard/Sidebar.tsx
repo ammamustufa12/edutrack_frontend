@@ -12,7 +12,7 @@ const menuItems = [
   { icon: "/images/icon/profile.png", label: "Formations", href: "/dashboard/formation" },
   { icon: "/images/icon/people.png", label: "Students", href: "/dashboard/students" },
   { icon: "/images/icon/document-text.png", label: "Enrolment", href: "/dashboard/users" },
-  { icon: "/images/icon/setting-2.png", label: "Settings", href: "/dashboard/settings" },
+{ icon: "/images/icon/setting-2.png", label: "Settings", href: "/dashboard/settings" },
 ];
 
 export const Sidebar = () => {
@@ -114,7 +114,7 @@ const MenuItem = ({
 }: MenuItemProps) => {
   const content = (
     <div
-      className={`flex items-center space-x-3 px-6 py-6 rounded-lg cursor-pointer transition-all duration-300 ${
+      className={`flex items-center space-x-3 px-6 py-4 rounded-lg cursor-pointer transition-all duration-300 ${
         active
           ? "bg-[#eeffe0] text-green-700 font-bold"
           : "text-[#6A6C80] hover:bg-gray-100"

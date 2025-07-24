@@ -24,7 +24,7 @@ export const UserTable = ({
   loading: boolean;
   error: string | null;
   onEdit: (user: User) => void;
-  onToggleStatus: (user: User) => Promise<User>; // ✅ Must return updated user
+  onToggleStatus: (user: User) => Promise<User>;
   onResetPassword: (user: User) => void;
 }) => {
   if (loading) return <p className="p-4 text-center">Loading users...</p>;
@@ -32,7 +32,7 @@ export const UserTable = ({
     return <p className="p-4 text-center text-red-600">Error: {error}</p>;
 
   return (
-    <div className="overflow-x-auto rounded-2xl bg-gray-50 ">
+    <div className="overflow-x-auto rounded-2xl bg-gray-50">
       <Table className="min-w-full border-separate border-spacing-y-4">
         <TableHeader>
           <TableRow className="bg-gray-50">
@@ -64,10 +64,11 @@ export const UserTable = ({
               </TableCell>
             </TableRow>
           ) : (
-            users.map((user) => (
+            users.map((user, index) => (
               <UserTableRow
                 key={user.id}
                 user={user}
+                isLast={index === users.length - 1}
                 onEdit={onEdit}
                 onToggleStatus={onToggleStatus}
                 onResetPassword={onResetPassword}
@@ -85,34 +86,43 @@ const UserTableRow = ({
   onEdit,
   onToggleStatus,
   onResetPassword,
+  isLast,
 }: {
   user: User;
   onEdit: (user: User) => void;
   onToggleStatus: (user: User) => Promise<User>;
   onResetPassword: (user: User) => void;
+  isLast?: boolean;
 }) => {
   return (
-    <TableRow className="bg-white rounded-xl shadow border border-gray-200">
-      <TableCell className="px-4 py-3 font-medium">{user.name}</TableCell>
-      <TableCell className="px-4 py-3 text-gray-600">{user.email}</TableCell>
-      <TableCell className="px-4 py-3 capitalize">{user.role}</TableCell>
-      <TableCell className="px-4 py-3">
-        <StatusBadge status={user.is_active} />
-      </TableCell>
-      <TableCell className="px-4 py-3">
+    <TableRow className="bg-white shadow border border-gray-200 overflow-hidden">
+     <TableCell className={`px-4 py-3 font-semibold text-gray-900 ${isLast ? "rounded-bl-xl" : ""}`}>
+    {user.name}
+  </TableCell>
+
+  {/* Email - gray */}
+  <TableCell className="px-4 py-3 text-gray-500">
+    {user.email}
+  </TableCell>
+
+  {/* Role - bold/capitalized */}
+  <TableCell className="px-4 py-3 capitalize font-medium text-gray-800">
+    {user.role}
+  </TableCell>
+
+  {/* Status - dot badge */}
+  <TableCell className="px-4 py-3">
+    <StatusBadge status={user.is_active} />
+  </TableCell>
+      <TableCell className={`px-4 py-3 ${isLast ? "rounded-br-xl" : ""}`}>
         <div className="flex items-center justify-center gap-2">
-          {/* <UserActions
+          <UserActions
             user={user}
             onEdit={onEdit}
             onToggleStatus={onToggleStatus}
+            onResetPassword={onResetPassword}
             onSuccess={() => {}}
-          /> */}
-          <UserActions
-  user={user}
-  // onEdit={onEdit}
-  // onToggleStatus={onToggleStatus}
-  onSuccess={() => {}}
-/>
+          />
         </div>
       </TableCell>
     </TableRow>
