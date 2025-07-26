@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Search, SlidersHorizontal, Plus } from "lucide-react";
+import { Search, SlidersHorizontal, RefreshCw } from "lucide-react";
 import { UserRole } from "@/types/user";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -16,8 +16,8 @@ interface UserFiltersProps {
   onStatusFilterChange: (status: "all" | "Active" | "Inactive") => void;
   loading?: boolean;
   onExportCSV?: () => void;
-  onRefresh?: () => void;
-  currentUserRole: UserRole;
+  onRefresh?: () => void; // New refresh handler
+  currentUserRole?: UserRole; // <-- Add this
 }
 
 export const UserFilters = ({
@@ -28,23 +28,42 @@ export const UserFilters = ({
   onRoleFilterChange,
   onStatusFilterChange,
   loading = false,
-  onExportCSV,
   onRefresh,
-  currentUserRole,
+  onExportCSV,
 }: UserFiltersProps) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [viewerRole, setViewerRole] = useState<UserRole | null>(null);
+  const [loadingViewer, setLoadingViewer] = useState(true);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const roles: { value: UserRole | "all"; label: string }[] = [
     { value: "all", label: "All" },
-    { value: "Super Admin", label: "Super Admin" },
+    { value: "SuperAdmin", label: "Super Admin" },
     { value: "Admin", label: "Admin" },
     { value: "Viewer", label: "Viewer" },
   ];
 
   const statusOptions = ["all", "Active", "Inactive"] as const;
 
+  // Fetch the logged-in user's role
+  useEffect(() => {
+    const userId = localStorage.getItem("userId");
+    if (!userId) {
+      setLoadingViewer(false);
+      return;
+    }
+
+    fetch(`https://edu-track-4h4z.onrender.com/api/v1/auth/me?id=${userId}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data?.success && data?.user) setViewerRole(data.user.role);
+      })
+      .catch((err) => console.error("Error fetching viewer:", err))
+      .finally(() => setLoadingViewer(false));
+  }, []);
+
+  // Close dropdown on outside click
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -61,8 +80,11 @@ export const UserFilters = ({
     setIsDropdownOpen(false);
   };
 
+  if (loadingViewer) return null; // Wait until role is fetched
+
   return (
     <div className="flex items-center gap-3">
+      {/* Search Bar */}
       <div className="relative flex-1 max-w-md">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
@@ -92,6 +114,7 @@ export const UserFilters = ({
           </button>
         </div>
 
+        {/* Filters Dropdown */}
         {isDropdownOpen && (
           <div
             ref={dropdownRef}
@@ -114,7 +137,13 @@ export const UserFilters = ({
                     <div className="w-2 h-2 rounded-full bg-blue-600" />
                   )}
                 </div>
-                <span className={roleFilter === role.value ? "text-gray-900 font-medium" : "text-gray-700"}>
+                <span
+                  className={
+                    roleFilter === role.value
+                      ? "text-gray-900 font-medium"
+                      : "text-gray-700"
+                  }
+                >
                   {role.label}
                 </span>
               </button>
@@ -122,7 +151,9 @@ export const UserFilters = ({
 
             <div className="border-t my-2" />
 
-            <p className="text-xs font-semibold px-4 text-gray-500">Filter by Status</p>
+            <p className="text-xs font-semibold px-4 text-gray-500">
+              Filter by Status
+            </p>
             {statusOptions.map((status) => (
               <button
                 key={status}
@@ -135,9 +166,17 @@ export const UserFilters = ({
                     statusFilter === status ? "border-blue-600" : "border-gray-300"
                   )}
                 >
-                  {statusFilter === status && <div className="w-2 h-2 rounded-full bg-blue-600" />}
+                  {statusFilter === status && (
+                    <div className="w-2 h-2 rounded-full bg-blue-600" />
+                  )}
                 </div>
-                <span className={statusFilter === status ? "text-gray-900 font-medium" : "text-gray-700"}>
+                <span
+                  className={
+                    statusFilter === status
+                      ? "text-gray-900 font-medium"
+                      : "text-gray-700"
+                  }
+                >
                   {status}
                 </span>
               </button>
@@ -146,21 +185,37 @@ export const UserFilters = ({
         )}
       </div>
 
-      <div className="flex items-center gap-2 ml-auto">
-        <Button
-          onClick={onExportCSV}
-          disabled={loading}
-          className="bg-[#93DA96] hover:bg-green-600 text-white rounded-lg font-medium"
-        >
-          Export CSV
-        </Button>
+      {/* Right Buttons: Only for SuperAdmin */}
+      {viewerRole === "SuperAdmin" && (
+        <div className="flex items-center gap-2 ml-auto">
+          {onRefresh && (
+            <Button
+              onClick={onRefresh}
+              disabled={loading}
+              variant="outline"
+              className="flex items-center gap-2 rounded-lg"
+            >
+              <RefreshCw className="h-4 w-4" /> Refresh
+            </Button>
+          )}
 
-        <CreateUserDialog
-          className="bg-black hover:bg-gray-800 text-white rounded-lg font-medium flex items-center gap-2 text-sm px-4 py-2"
-          open={isDialogOpen}
-          onOpenChange={setIsDialogOpen}
-        />
-      </div>
+          {onExportCSV && (
+            <Button
+              onClick={onExportCSV}
+              disabled={loading}
+              className="bg-[#93DA96] hover:bg-green-600 text-white rounded-lg font-medium"
+            >
+              Export CSV
+            </Button>
+          )}
+
+          <CreateUserDialog
+            className="bg-black hover:bg-gray-800 text-white rounded-lg font-medium flex items-center gap-2 text-sm px-4 py-2"
+            open={isDialogOpen}
+            onOpenChange={setIsDialogOpen}
+          />
+        </div>
+      )}
     </div>
   );
 };

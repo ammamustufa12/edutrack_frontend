@@ -52,7 +52,7 @@ export default function EditUserDialog({
         firstName,
         lastName,
         email: user.email,
-        role: user.role,
+          role: user.role === "SuperAdmin" ? "Super Admin" : user.role,
       });
     }
   }, [user, form]);

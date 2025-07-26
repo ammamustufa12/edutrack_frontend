@@ -29,7 +29,7 @@ import {
 } from "@/components/ui/select";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import { Eye, EyeOff, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import { createUserSchema, type CreateUserFormData } from "./validation";
 
 interface CreateUserDialogProps {
@@ -43,7 +43,6 @@ export default function CreateUserDialog({
   onOpenChange,
   className,
 }: CreateUserDialogProps) {
-  const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<CreateUserFormData>({
@@ -52,14 +51,21 @@ export default function CreateUserDialog({
       firstName: "",
       lastName: "",
       email: "",
-      role: "Super Admin",
-      password: "",
+      phone: "",
+      role: "Admin",
     },
   });
 
   const onSubmit = async (data: CreateUserFormData) => {
     setIsSubmitting(true);
     try {
+      console.log("📤 Form data sending:", {
+        name: `${data.firstName} ${data.lastName}`,
+        email: data.email,
+        phone: data.phone,
+        role: data.role,
+      });
+
       const res = await fetch(
         "https://edu-track-4h4z.onrender.com/api/v1/auth/register",
         {
@@ -68,13 +74,14 @@ export default function CreateUserDialog({
           body: JSON.stringify({
             name: `${data.firstName} ${data.lastName}`,
             email: data.email,
-            password: data.password,
+            phone: data.phone,
             role: data.role,
           }),
         }
       );
 
       const result = await res.json();
+      console.log("📥 Response status:", res.status, result);
 
       if (!res.ok) {
         throw new Error(result?.error || "Registration failed");
@@ -94,10 +101,6 @@ export default function CreateUserDialog({
     form.reset();
     onOpenChange(false);
   };
-
-  const watchedPassword = form.watch("password");
-  const isPasswordValid =
-    watchedPassword.length >= 8 && /\d/.test(watchedPassword);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -215,50 +218,14 @@ export default function CreateUserDialog({
                 />
                 <FormField
                   control={form.control}
-                  name="password"
+                  name="phone"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Password</FormLabel>
+                      <FormLabel>Phone</FormLabel>
                       <FormControl>
-                        <div className="relative">
-                          <Input
-                            type={showPassword ? "text" : "password"}
-                            placeholder="Enter password"
-                            className="pr-10"
-                            {...field}
-                          />
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="sm"
-                            className="absolute right-0 top-0 h-full px-3 py-2"
-                            onClick={() =>
-                              setShowPassword((prev) => !prev)
-                            }
-                          >
-                            {showPassword ? (
-                              <EyeOff className="h-4 w-4 text-gray-400" />
-                            ) : (
-                              <Eye className="h-4 w-4 text-gray-400" />
-                            )}
-                          </Button>
-                        </div>
+                        <Input placeholder="Enter phone number" {...field} />
                       </FormControl>
-                      <div className="mt-1">
-                        {form.formState.errors.password ? (
-                          <FormMessage className="text-xs" />
-                        ) : (
-                          <p
-                            className={`text-xs mt-1 ${
-                              isPasswordValid
-                                ? "text-green-500"
-                                : "text-gray-400"
-                            }`}
-                          >
-                            Minimum 8 characters, 1 number
-                          </p>
-                        )}
-                      </div>
+                      <FormMessage className="text-xs" />
                     </FormItem>
                   )}
                 />

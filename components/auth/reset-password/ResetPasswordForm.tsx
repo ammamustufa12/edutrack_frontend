@@ -57,9 +57,11 @@ export const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({ token }) =
 
   return (
     <form onSubmit={handleSubmit} className="w-full max-w-md space-y-6">
-      <h2 className="text-2xl font-semibold text-gray-700">Reset Your Password</h2>
+      <h2 style={{ fontFamily: "General Sans, sans-serif", color: "#333333",fontSize:25 }} className="text-3xl font-bold text-gray-800">Reset Your Password</h2>
 
       <input
+ style={{ fontFamily: "General Sans, sans-serif", color: "#333333",fontSize:15 }}
+                   
         type="password"
         placeholder="New password"
         className="w-full px-4 py-3 border rounded-md"
@@ -70,6 +72,9 @@ export const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({ token }) =
       />
 
       <input
+ style={{ fontFamily: "General Sans, sans-serif", color: "#333333",fontSize:15 }}
+                   
+              
         type="password"
         placeholder="Confirm new password"
         className="w-full px-4 py-3 border rounded-md"
@@ -80,6 +85,7 @@ export const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({ token }) =
       />
 
       <button
+         style={{ fontFamily: "General Sans, sans-serif", color: "#fff",fontSize:13 }}
         type="submit"
         disabled={loading}
         className="w-full py-3 bg-blue-700 text-white rounded-md hover:bg-blue-600 transition"

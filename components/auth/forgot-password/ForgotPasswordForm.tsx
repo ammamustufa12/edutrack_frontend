@@ -63,7 +63,7 @@ export const ForgotPasswordForm = () => {
   return (
     <div className="w-full max-w-lg space-y-8 mx-auto">
       <div className="space-y-2 text-center">
-        <h2 className="text-3xl font-bold text-gray-800">Forgot Password</h2>
+        <h2 style={{ fontFamily: "General Sans, sans-serif", color: "#333333",fontSize:25 }} className="text-3xl font-bold text-gray-800">Forgot Password</h2>
       </div>
 
       <Form {...form}>
@@ -76,6 +76,7 @@ export const ForgotPasswordForm = () => {
                 <FormLabel>Email Address</FormLabel>
                 <FormControl>
                   <Input
+                     style={{ fontFamily: "General Sans, sans-serif", color: "#333333",fontSize:15 }}
                     placeholder="Enter your registered email"
                     className="h-12 rounded-lg"
                     {...field}
@@ -87,6 +88,7 @@ export const ForgotPasswordForm = () => {
           />
 
           <Button
+            style={{ fontFamily: "General Sans, sans-serif", color: "#fff",fontSize:13 }}
             type="submit"
             disabled={form.formState.isSubmitting}
             className="w-full h-12 bg-blue-900 hover:bg-blue-800 text-white font-medium rounded-lg transition-colors"
