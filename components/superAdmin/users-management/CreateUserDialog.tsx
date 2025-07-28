@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -24,11 +25,10 @@ import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
+  SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Label } from "@/components/ui/label";
 import { Plus } from "lucide-react";
 import { createUserSchema, type CreateUserFormData } from "./validation";
 
@@ -59,13 +59,6 @@ export default function CreateUserDialog({
   const onSubmit = async (data: CreateUserFormData) => {
     setIsSubmitting(true);
     try {
-      console.log("📤 Form data sending:", {
-        name: `${data.firstName} ${data.lastName}`,
-        email: data.email,
-        phone: data.phone,
-        role: data.role,
-      });
-
       const res = await fetch(
         "https://edu-track-4h4z.onrender.com/api/v1/auth/register",
         {
@@ -81,13 +74,8 @@ export default function CreateUserDialog({
       );
 
       const result = await res.json();
-      console.log("📥 Response status:", res.status, result);
+      if (!res.ok) throw new Error(result?.error || "Registration failed");
 
-      if (!res.ok) {
-        throw new Error(result?.error || "Registration failed");
-      }
-
-      console.log("✅ User created:", result);
       form.reset();
       onOpenChange(false);
     } catch (error: any) {
@@ -181,41 +169,40 @@ export default function CreateUserDialog({
                 )}
               />
 
-              <div className="grid grid-cols-2 gap-4">
-                <FormField
-                  control={form.control}
-                  name="role"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Role</FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger>SELECT ROLE</SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <RadioGroup
-                            value={field.value}
-                            onValueChange={field.onChange}
-                          >
-                            {["Admin", "Viewer"].map((role) => (
-                              <div
-                                className="flex items-center space-x-3"
-                                key={role}
-                              >
-                                <RadioGroupItem value={role} id={role} />
-                                <Label htmlFor={role}>{role}</Label>
-                              </div>
-                            ))}
-                          </RadioGroup>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage className="text-xs" />
-                    </FormItem>
+<div className="grid grid-cols-2 gap-4">
+  {/* ✅ Role select with no border radius and proper spacing */}
+  <FormField
+    control={form.control}
+    name="role"
+    render={({ field }) => (
+      <FormItem>
+        <FormLabel>Role</FormLabel>
+        <Select onValueChange={field.onChange} defaultValue={field.value}>
+          <FormControl>
+            <SelectTrigger className="h-10 border border-gray-300 rounded-none">
+              <SelectValue placeholder="SELECT ROLE" />
+            </SelectTrigger>
+          </FormControl>
+          <SelectContent className="p-0 gap-0 rounded-none data-[state=open]:rounded-none">
+            <SelectItem
+              value="Admin"
+              className="py-2 px-3 pl-8 hover:bg-gray-100 cursor-pointer rounded-none"
+            >
+              Admin
+            </SelectItem>
+            <SelectItem
+              value="Viewer"
+              className="py-2 px-3 pl-8 hover:bg-gray-100 cursor-pointer rounded-none"
+            >
+              Viewer
+            </SelectItem>
+          </SelectContent>
+        </Select>
+        <FormMessage className="text-xs" />
+      </FormItem>
                   )}
                 />
+
                 <FormField
                   control={form.control}
                   name="phone"
@@ -227,6 +214,9 @@ export default function CreateUserDialog({
                       </FormControl>
                       <FormMessage className="text-xs" />
                     </FormItem>
+
+
+
                   )}
                 />
               </div>
@@ -252,6 +242,8 @@ export default function CreateUserDialog({
             </div>
           </form>
         </Form>
+
+        
       </DialogContent>
     </Dialog>
   );

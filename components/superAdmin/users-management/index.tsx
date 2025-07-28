@@ -3,7 +3,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { User } from "@/types/user";
-import { UserFilters } from "./UserFilters";
+import { UserFilters } from "@/components/superAdmin/users-management/UserFilters";
 import { UserTable } from "./UserTable";
 import { UserPagination } from "./usersPagination";
 import { fetchUsers } from "@/actions/users";

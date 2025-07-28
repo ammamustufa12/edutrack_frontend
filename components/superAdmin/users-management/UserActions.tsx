@@ -6,6 +6,7 @@ import { Users, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import EditUserDialog from "@/components/superAdmin/users-management/EditUserDialog";
 import ResetPasswordDialog from "@/components/superAdmin/users-management/ResetPasswordDialog";
+import ViewUserDialog from "@/components/superAdmin/users-management/ViewUserDialog";
 import { User } from "@/types/user";
 import { useQuery } from "@tanstack/react-query";
 
@@ -22,7 +23,7 @@ interface UserActionsProps {
   onSuccess: () => void;
 }
 
-// Fetch function for React Query
+// Fetch logged-in user details for role check
 const fetchViewer = async (): Promise<Viewer | null> => {
   const userId = localStorage.getItem("userId");
   if (!userId) return null;
@@ -40,8 +41,8 @@ export const UserActions = ({ user, onSuccess }: UserActionsProps) => {
   const [currentUser, setCurrentUser] = useState<User>(user);
   const [editOpen, setEditOpen] = useState(false);
   const [resetOpen, setResetOpen] = useState(false);
+  const [viewOpen, setViewOpen] = useState(false);
 
-  // React Query to fetch logged-in user
   const {
     data: viewer,
     isLoading: loadingViewer,
@@ -84,7 +85,6 @@ export const UserActions = ({ user, onSuccess }: UserActionsProps) => {
       {/* SuperAdmin Actions */}
       {role === "SuperAdmin" && (
         <div className="flex space-x-2">
-          {/* Reset Password */}
           <Button
             variant="ghost"
             size="sm"
@@ -101,7 +101,6 @@ export const UserActions = ({ user, onSuccess }: UserActionsProps) => {
             Reset Password
           </Button>
 
-          {/* Edit */}
           <Button
             variant="ghost"
             size="sm"
@@ -118,7 +117,6 @@ export const UserActions = ({ user, onSuccess }: UserActionsProps) => {
             Edit
           </Button>
 
-          {/* Status */}
           <Button
             variant="ghost"
             size="sm"
@@ -142,7 +140,7 @@ export const UserActions = ({ user, onSuccess }: UserActionsProps) => {
             variant="ghost"
             size="sm"
             className="flex flex-col items-center justify-center w-[120px] h-14 text-[10px] text-purple-500 bg-purple-50 hover:text-purple-800 hover:bg-purple-100"
-            onClick={() => console.log("View user details", currentUser.id)}
+            onClick={() => setViewOpen(true)}
           >
             <Eye className="h-4 w-4 mb-1" />
             View
@@ -160,6 +158,13 @@ export const UserActions = ({ user, onSuccess }: UserActionsProps) => {
             <Users className="h-4 w-4 mb-1" />
             {currentUser.is_active ? "Deactivate" : "Activate"}
           </Button>
+
+          {/* ViewUserDialog popup */}
+          <ViewUserDialog
+            userId={currentUser.id}
+            open={viewOpen}
+            onClose={() => setViewOpen(false)}
+          />
         </div>
       )}
 
